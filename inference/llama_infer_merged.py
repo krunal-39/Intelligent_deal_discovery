@@ -32,7 +32,7 @@ def test_model():
 
         if 'choices' in data and len(data['choices']) > 0:
             raw_text = data['choices'][0]['text']
-            print(f"📝 Raw Model Output: '{raw_text}'")
+            print(f"Raw Model Output: '{raw_text}'")
             
             # Extract number
             numbers = re.findall(r"\d+\.?\d*", raw_text)
