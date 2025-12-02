@@ -102,7 +102,7 @@ class PlanningAgent(Agent):
         seen_urls = self._load_memory()
         found_deals = self.scanner.scan(memory=seen_urls, query=user_query)
         
-        # ✅ NEW LIST TO STORE VALID DEALS
+        #  NEW LIST TO STORE VALID DEALS
         great_deals_list = []
         
         for deal in found_deals:
@@ -118,11 +118,11 @@ class PlanningAgent(Agent):
             
             res = self.process_deal(deal_dict)
             
-            # ✅ COLLECT IF IT IS A DEAL
+            #  COLLECT IF IT IS A DEAL
             if res['is_deal']:
                 great_deals_list.append(res)
                 
-        # ✅ SEND ALL DEALS IN ONE BATCH AT THE END
+        # SEND ALL DEALS IN ONE BATCH AT THE END
         if len(great_deals_list) > 0:
             self.log(f"sending {len(great_deals_list)} deals to Telegram...")
             self.messenger.send_batch_summary(great_deals_list)
