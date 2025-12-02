@@ -9,11 +9,10 @@ class SpecialistAgent(Agent):
     name = "Specialist (LLaMA)"
     color = Agent.RED
     
-    # Point to your local vLLM instance
+    # Point to your local vLLM instanc
     VLLM_URL = "http://localhost:8000/v1/completions"
 
     def __init__(self):
-        # No special init needed for REST API
         super().__init__(self.name, self.color)
 
     def predict(self, unified_prompt: str) -> float:
@@ -22,15 +21,13 @@ class SpecialistAgent(Agent):
         Returns price as float (e.g., 19.99).
         """
         payload = {
-            # --- UPDATED: Matches your new folder name ---
             "model": "specialist_llama",  
             "prompt": unified_prompt,
-            "max_tokens": 10,        # We only need the number
-            "temperature": 0.1       # Low temp = more precise
+            "max_tokens": 10,       
+            "temperature": 0.1 
         }
         
         try:
-            # self.log("Querying vLLM...")
             res = requests.post(self.VLLM_URL, json=payload, timeout=20)
             
             if res.status_code == 200:
