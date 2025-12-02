@@ -16,7 +16,7 @@ class FrontierAgent(Agent):
         self.api_key = os.getenv("GEMINI_API_KEY_4")
         
         if not self.api_key:
-            self.log("⚠️ Error: GEMINI_API_KEY_4 not found in .env")
+            self.log("Error: GEMINI_API_KEY_4 not found in .env")
         else:
             genai.configure(api_key=self.api_key)
             self.model = genai.GenerativeModel("models/gemini-2.5-flash-lite")
@@ -31,11 +31,10 @@ class FrontierAgent(Agent):
 
         try:
             # 1. OPTIMIZATION: Force concise output via API config
-            # This tells Gemini: "Don't chat, just give me the tokens"
             generation_config = genai.types.GenerationConfig(
                 candidate_count=1,
-                max_output_tokens=10, # Cut it off if it tries to write a paragraph
-                temperature=0.1       # Be strictly deterministic
+                max_output_tokens=10, 
+                temperature=0.1      
             )
             
             response = self.model.generate_content(
@@ -45,8 +44,6 @@ class FrontierAgent(Agent):
             text = response.text.strip()
             
             # 2. IMPROVED PARSING STRATEGY
-            
-            # Priority A: Look for a Dollar Sign (Best signal)
             # Matches: "$19.99", "$ 19.99"
             dollar_match = re.search(r'\$\s?(\d+(?:\.\d+)?)', text)
             if dollar_match:
