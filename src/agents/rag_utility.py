@@ -15,9 +15,9 @@ class RAGUtility(Agent):
             self.index = load_index("rag/faiss_index.bin")
             device = "cuda" if torch.cuda.is_available() else "cpu"
             self.encoder = SentenceTransformer("intfloat/e5-large", device=device)
-            self.log("✅ RAG System Loaded.")
+            self.log("RAG System Loaded.")
         except Exception as e:
-            self.log(f"❌ RAG Load Failed: {e}")
+            self.log(f" RAG Load Failed: {e}")
             self.index = None
 
     def _get_rag_docs(self, query):
@@ -36,21 +36,21 @@ class RAGUtility(Agent):
         Constructs the prompt EXACTLY matching the training data format.
         target_data: Dict with keys 'title', 'category', 'features', 'description', 'details'
         """
-        # 1. System Instruction (Matches training)
+        # 1. System Instruction
         parts = [
             "You are a helpful assistant that estimates the price of a product based on its title, "
             "category, features, description, and details. Return only the numeric price in USD, "
             "formatted with two decimals (e.g., 19.99)."
         ]
 
-        # 2. Few-Shot Examples (Context)
+        # 2. Few-Shot Examples 
         if docs:
             parts.append("\n\nReference Examples (Context):")
             for i, d in enumerate(docs):
                 clean_text = d['prompt'].strip()
                 parts.append(f"\n--- Example {i+1} ---\n{clean_text}\nResponse: {d['response']}")
 
-        # 3. Target Product (Matches training format)
+        # 3. Target Product
         target_prompt = (
             f"\n\nProduct Title: {target_data.get('title', '')}\n"
             f"Product Category: {target_data.get('category', 'General')}\n" 
@@ -68,6 +68,6 @@ class RAGUtility(Agent):
         Accepts the full deal dictionary now, not just title.
         """
         title = deal_data.get('title', '')
-        # Retrieve similar docs using Title (best for semantic search)
+        # Retrieve similar docs using Title 
         docs = self._get_rag_docs(title)
         return self._build_prompt_string(deal_data, docs)
