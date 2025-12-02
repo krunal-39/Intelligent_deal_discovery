@@ -1,7 +1,7 @@
 import requests
 from src.agents.base_agent import Agent
 
-# --- CONFIGURATION ---
+#CONFIGURATION 
 DO_CONSOLE = True   
 DO_TELEGRAM = True  
 
@@ -12,12 +12,12 @@ class MessagingAgent(Agent):
     def __init__(self):
         super().__init__(self.name, self.color)
         
-        # ----- Telegram Setup -----
+        # Telegram Setup 
         self.bot_token = "8112476495:AAFwHs8HnfnRZO5BcwzmPweA8xgMy1uVJrw"
         self.chat_id = "7687044080"
         
         self.telegram_enabled = True
-        self.log("✅ Messaging Agent Ready (Batch Mode)")
+        self.log("Messaging Agent Ready (Batch Mode)")
 
     def send_batch_summary(self, deal_list: list):
         """
@@ -35,7 +35,7 @@ class MessagingAgent(Agent):
         for deal_data in deal_list:
             deal_text = self._format_rich_message(deal_data)
             full_message += deal_text
-            full_message += "\n━━━━━━━━━━━━━━━━━━\n" # Separator line
+            full_message += "\n━━━━━━━━━━━━━━━━━━\n" 
 
         # 3. Send the single massive message
         if DO_CONSOLE:
@@ -68,11 +68,9 @@ class MessagingAgent(Agent):
         payload = {
             "chat_id": self.chat_id, 
             "text": message, 
-            "disable_web_page_preview": True # Set True so the chat isn't cluttered with 10 images
-        }
+            "disable_web_page_preview": True 
         
         try:
-            # Telegram has a limit of 4096 chars. If message is too long, we slice it.
             if len(message) > 4000:
                 message = message[:4000] + "\n...(truncated due to size limit)"
                 payload['text'] = message
