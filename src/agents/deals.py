@@ -9,14 +9,14 @@ import time
 # Combined Feed List: Slickdeals + DealNews
 RSS_FEEDS = [
     
-    # "https://www.dealnews.com/f1912/Smart-Home/?rss=1",
-    # "https://www.dealnews.com/c142/Electronics/?rss=1",
+     "https://www.dealnews.com/f1912/Smart-Home/?rss=1",
+     "https://www.dealnews.com/c142/Electronics/?rss=1",
     
     
     # --- DealNews (Computers & Laptops) ---
-    # "https://www.dealnews.com/c49/Computers/Laptops/?rss=1",
-    # "https://www.dealnews.com/c49/Computers/Laptops/f31/Gaming/?rss=1",
-    # "https://www.dealnews.com/c41/Computers/Apple-Computers/?rss=1",
+     "https://www.dealnews.com/c49/Computers/Laptops/?rss=1",
+     "https://www.dealnews.com/c49/Computers/Laptops/f31/Gaming/?rss=1",
+     "https://www.dealnews.com/c41/Computers/Apple-Computers/?rss=1",
     
     # --- Slickdeals (Custom Searches) ---
     "https://slickdeals.net/newsearch.php?mode=popdeals&searcharea=deals&searchin=first&rss=1&q=computers",
@@ -116,10 +116,10 @@ class ScrapedDeal:
                 # Use a browser User-Agent to avoid being blocked
                 feed = feedparser.parse(url, agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
                 
-                for entry in feed.entries[:10]: 
+                for entry in feed.entries[:6]: 
                     deal = cls(entry)
                     # REJECTION LOGIC: Only keep deal if we found a valid price in the title
-                    if 0 < deal.price < 800.00:
+                    if 0 < deal.price < 999.00:
                         found_deals.append(deal)
                         
                 time.sleep(0.5) 
