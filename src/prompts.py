@@ -4,18 +4,18 @@ Prompt templates for training, validation, and inference
 for the LLaMA-8B QLoRA price prediction fine-tuning task.
 """
 
-# -----------------------------
-# 🧠 System prompt (base)
-# -----------------------------
+
+# System prompt 
+
 SYSTEM_PROMPT = (
     "You are a helpful assistant that estimates the price of a product "
     "based on its title, category, store, features, description, and details. "
     "Return only the numeric price in USD, formatted with two decimals (e.g., 19.99)."
 )
 
-# -----------------------------
-# 📘 Training / Validation prompt
-# -----------------------------
+
+# Training / Validation prompt
+
 TRAIN_PROMPT_TEMPLATE = (
     "{system}\n\n"
     "Product Title: {title}\n"
@@ -27,9 +27,8 @@ TRAIN_PROMPT_TEMPLATE = (
     "Estimate the price (USD) for this product."
 )
 
-# -----------------------------
-# 🧪 Inference / Testing prompt
-# -----------------------------
+
+# Inference / Testing prompt
 TEST_PROMPT_TEMPLATE = (
     "{system}\n\n"
     "Product Title: {title}\n"
@@ -41,9 +40,8 @@ TEST_PROMPT_TEMPLATE = (
     "Predict the price in USD (two decimals)."
 )
 
-# -----------------------------
-# 🧩 Helper function to build prompt
-# -----------------------------
+
+# Helper function to build prompt
 def build_prompt(
     title="",
     category="",
@@ -69,9 +67,9 @@ def build_prompt(
     )
 
 
-# -----------------------------
-# 🧱 Convert a DataFrame row into a JSONL-ready example
-# -----------------------------
+
+#  Convert a DataFrame row into a JSONL-ready example
+
 def row_to_example(row, mode="train"):
     """
     Converts a single DataFrame row into a prompt-response pair.
@@ -91,5 +89,5 @@ def row_to_example(row, mode="train"):
         response = f"{price:.2f}"
         return {"prompt": prompt, "response": response}
     except Exception as e:
-        print(f"⚠️ Skipping row due to error: {e}")
+        print(f"Skipping row due to error: {e}")
         return None
