@@ -46,7 +46,7 @@ class ScannerAgent(Agent):
         1. Select ONLY specific physical products (e.g., "Dell Inspiron 15", "Sony Headphones").
         2. DO NOT select General Sales Events, Bundles, or Lists (e.g., "Cyber Monday Deals", "Up to 50% off", "Flash Sale").
         3. DO NOT select items where the title implies a collection (e.g., "Laptops starting at $200").
-        4. Select up to 15 of the BEST matches. If fewer than 15 match, return only the good ones.
+        4. Select up to 5 of the BEST matches. If fewer than 5 match, return only the good ones.
 
         From the list below, select the matches.
         
@@ -111,8 +111,7 @@ class ScannerAgent(Agent):
                         retailer=orig.retailer # Preserve Retailer info
                     ))
             
-            # Limit to 9 items just in case LLM returned more
-            return final_deals[:9]
+            return final_deals
 
         except Exception as e:
             self.log(f"Gemini Filtering failed: {e}")
