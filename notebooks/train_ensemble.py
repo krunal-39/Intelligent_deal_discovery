@@ -7,17 +7,16 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 
 # --- CONFIGURATION ---
-INPUT_FILE = os.path.join("data", "ensemble_dataset_full.csv")
-# Where we will save the specific LightGBM ensemble model
-MODEL_SAVE_PATH = os.path.join("src", "models", "ensemble", "price_ensemble_lgbm.json")
+IINPUT_FILE = os.path.join("data", "ensemble_dataset_full.csv")
+MODEL_SAVE_PATH = os.path.join("src", "models", "ensemble", "price_ensemble.json")
 
 def main():
     # 1. Load Data
     if not os.path.exists(INPUT_FILE):
-        print(f"❌ Error: Could not find {INPUT_FILE}")
+        print(Error: Could not find {INPUT_FILE}")
         return
 
-    print(f"🚀 Loading data from {INPUT_FILE}...")
+    print(f"Loading data from {INPUT_FILE}...")
     try:
         df = pd.read_csv(INPUT_FILE, sep='\t')
     except Exception as e:
@@ -27,7 +26,7 @@ def main():
     # Basic cleaning
     initial_len = len(df)
     df = df[df['ground_truth'] > 0].dropna()
-    print(f"   -> Loaded {initial_len} rows. (Used {len(df)} after cleaning)")
+    print(f"Loaded {initial_len} rows. (Used {len(df)} after cleaning)")
     print("-" * 60)
 
     # 2. Define the Experiments
@@ -36,7 +35,7 @@ def main():
 
     experiments = [
         ("Base Random Forest (TF-IDF)", 'base_rf_pred'),
-        ("LightGBM (TF-IDF)",           'lgbm_pred'),  # <--- We want to save this one
+        ("LightGBM (TF-IDF)",           'lgbm_pred'), 
         ("RF E5 (Embeddings)",          'rf_e5_pred')
     ]
 
@@ -78,27 +77,22 @@ def main():
         importances = xgb_model.feature_importances_
 
         # Print Results
-        print(f"   📉 MSE:  {mse:.4f}")
-        print(f"   📉 RMSE: {rmse:.4f}")
-        print(f"   📉 MAE:  {mae:.4f}")
+        print(f"MSE:  {mse:.4f}")
+        print(f"RMSE: {rmse:.4f}")
+        print(f"MAE:  {mae:.4f}")
         
-        print(f"   ⚖️  Model Weights (Importance %):")
+        print(f"Model Weights (Importance %):")
         feat_imp_list = sorted(zip(feature_cols, importances), key=lambda x: x[1], reverse=True)
         for name, val in feat_imp_list:
-            print(f"      • {name:<15} : {val:.4f}")
+            print(f"{name:<15} : {val:.4f}")
 
-        # --- SAVE LOGIC ---
-        # Only save if this is the LightGBM experiment
+        # SAVE LOGIC
         if variable_col == 'lgbm_pred':
-            print(f"\n   💾 SAVING MODEL (LightGBM Variant detected)...")
-            
-            # Optional: Retrain on FULL dataset for production use
-            # (If you prefer to save the 80% split version, comment out the next line)
+            print(f"\n SAVING MODEL (LightGBM Variant detected)...")
             xgb_model.fit(X, y) 
-            
             os.makedirs(os.path.dirname(MODEL_SAVE_PATH), exist_ok=True)
             xgb_model.save_model(MODEL_SAVE_PATH)
-            print(f"   ✅ Saved to: {MODEL_SAVE_PATH}")
+            print(f"Saved to: {MODEL_SAVE_PATH}")
             
         print("-" * 60)
 
