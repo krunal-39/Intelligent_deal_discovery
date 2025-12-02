@@ -18,18 +18,18 @@ class EnsembleAgent(Agent):
         self.rag = RAGUtility()
         self.specialist = SpecialistAgent()     # LLaMA
         self.frontier = FrontierAgent()         # Gemini
-        self.lgbm = LightGBMAgent()             # LightGBM (The code you pasted belongs in lightgbm_agent.py)
+        self.lgbm = LightGBMAgent()             # LightGBM 
         
-        # 2. Load the Manager Brain (XGBoost)
+        # 2. Load the XGBoost
         xgb_path = "src/models/ensemble/ensemble.json"
         
         try:
             self.xgb = xgb.XGBRegressor()
             self.xgb.load_model(xgb_path)
-            self.log(f"✅ XGBoost Mixer Loaded from {xgb_path}.")
+            self.log(f"XGBoost Mixer Loaded from {xgb_path}.")
         except Exception as e:
-            self.log(f"⚠️ XGBoost not found: {e}")
-            self.log("   -> Will use simple average fallback.")
+            self.log(f" XGBoost not found: {e}")
+            self.log("Will use simple average fallback.")
             self.xgb = None
 
     def get_price(self, deal_data: dict) -> dict:
@@ -51,12 +51,9 @@ class EnsembleAgent(Agent):
         llama_price = self.specialist.predict(unified_prompt)
         
         # 3. LightGBM (Replacing Random Forest)
-        # We pass the full deal_data dict because LightGBM needs title, description, etc.
         lgbm_price = self.lgbm.predict(deal_data)
         
         # --- Step C: Aggregate ---
-        # Note: We map lgbm_price to the column previously used for 'rf_pred' 
-        # so the pre-trained XGBoost model accepts the input.
         input_df = pd.DataFrame([[llama_price, gemini_price, lgbm_price]], 
                                 columns=['llama_pred', 'gemini_pred', 'lgbm_pred'])
         
