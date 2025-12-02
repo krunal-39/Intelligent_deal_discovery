@@ -4,7 +4,6 @@ import re
 
 URL = "http://localhost:8000/v1/completions"
 
-# This is the EXACT prompt from your training data (Rich Context)
 TEST_PROMPT = """You are a helpful assistant that estimates the price of a product based on its title, category, store, features, description, and details. Return only the numeric price in USD, formatted with two decimals (e.g., 19.99).
 
 Product Title: LEZYNE Power Drive 1100i Loaded Headlight Kit Silver, One Size
@@ -21,9 +20,9 @@ def test_model():
     
     payload = {
         "model": "llama-qlora",
-        "prompt": TEST_PROMPT,  # Sending the full rich text directly
+        "prompt": TEST_PROMPT,  
         "max_tokens": 10,
-        "temperature": 0.1      # Low temp for deterministic results
+        "temperature": 0.1   
     }
 
     try:
@@ -31,7 +30,6 @@ def test_model():
         response.raise_for_status()
         data = response.json()
 
-        # Debug: Check if 'choices' exists
         if 'choices' in data and len(data['choices']) > 0:
             raw_text = data['choices'][0]['text']
             print(f"📝 Raw Model Output: '{raw_text}'")
@@ -39,12 +37,12 @@ def test_model():
             # Extract number
             numbers = re.findall(r"\d+\.?\d*", raw_text)
             if numbers:
-                print(f"💰 Parsed Price: ${numbers[0]}")
-                print(f"🎯 Target Price: $99.92")
+                print(f"Parsed Price: ${numbers[0]}")
+                print(f"Target Price: $99.92")
             else:
-                print("⚠️ No number found in output.")
+                print("No number found in output.")
         else:
-            print(f"❌ Empty Response: {data}")
+            print(f"Empty Response: {data}")
 
     except Exception as e:
         print(f"Error: {e}")
