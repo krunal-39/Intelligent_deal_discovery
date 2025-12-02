@@ -64,7 +64,7 @@ class EnsembleAgent(Agent):
         
         if self.xgb:
             try:
-                final_price = self.xgb.predict(input_df)[0] * 1.10
+                final_price = self.xgb.predict(input_df)[0] 
             except Exception as e:
                 self.log(f"XGBoost Error: {e}, falling back to average")
                 final_price = ((llama_price + gemini_price + lgbm_price) / 3 )
