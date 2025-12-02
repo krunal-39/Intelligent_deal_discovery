@@ -9,10 +9,6 @@ from dotenv import load_dotenv
 import google.generativeai as genai
 from sentence_transformers import SentenceTransformer
 
-# ---------------------------------------------------------
-# CHANGE 1: Path Setup to find 'rag' module from 'inference'
-# ---------------------------------------------------------
-# Get the absolute path to the project root (one level up from 'inference')
 current_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.abspath(os.path.join(current_dir, ".."))
 
@@ -20,25 +16,17 @@ project_root = os.path.abspath(os.path.join(current_dir, ".."))
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
-# Define where the RAG data actually lives
 RAG_DIR = os.path.join(project_root, "rag")
 
-# ---------------------------------------------------------
-# CHANGE 2: Update Imports to point to 'rag.query_faiss'
-# ---------------------------------------------------------
+# Imports from 'rag.query_faiss'
 from rag.query_faiss import (
     load_metadata,
     load_index,
     get_encoder_name,
     TOP_K,
-    # We ignore INDEX_PATH/META_PATH imports here to avoid relative path bugs.
-    # We will construct them manually below.
 )
 
 def get_faiss_results(query):
-    # ---------------------------------------------------------
-    # CHANGE 3: Force paths to point to the 'rag/' folder
-    # ---------------------------------------------------------
     # This ensures it finds the files even if you run from root or inference/
     meta_path = os.path.join(RAG_DIR, "metadata.jsonl")
     index_path = os.path.join(RAG_DIR, "faiss_index.bin")
@@ -107,7 +95,6 @@ def rag_predict(query):
         out = model.generate_content(prompt)
         raw_text = out.text.strip()
         
-        # --- PARSING LOGIC ---
         # Extract the first numeric value found (handles "$19.99", "19.99", etc.)
         numbers = re.findall(r"\d+\.?\d*", raw_text)
         
