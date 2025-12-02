@@ -8,8 +8,8 @@ class EvaluatorAgent(Agent):
     name = "Evaluator Agent"
     color = Agent.MAGENTA
 
-    # Threshold for triggering an alert (Percentage only)
-    DISCOUNT_THRESHOLD_PERCENT = 5.0
+    # Threshold for triggering an alert 
+    DISCOUNT_THRESHOLD_PERCENT = 10.0
 
     def __init__(self):
         super().__init__(self.name, self.color)
@@ -28,7 +28,7 @@ class EvaluatorAgent(Agent):
         else:
             discount_pct = 0.0
 
-        # 2. Determine Verdict (Based ONLY on Percentage)
+        # 2. Determine Verdict 
         verdict = "PASS"
         is_alert_worthy = False
 
@@ -36,7 +36,6 @@ class EvaluatorAgent(Agent):
             verdict = "GREAT DEAL"
             is_alert_worthy = True
         elif discount_pct > 0:
-            # Positive discount but didn't meet the 20% threshold
             verdict = "PASS (Small Discount)"
             is_alert_worthy = False
         else:
