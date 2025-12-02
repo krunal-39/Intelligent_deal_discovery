@@ -18,9 +18,9 @@ import numpy as np
 import re
 from tqdm import tqdm
 
-# ---------------------------------------------------------------------
+
 # Configuration
-# ---------------------------------------------------------------------
+
 DATA_DIR = "/data/home/anjeshnarwal/LLM_price_predictor/data/cleaned"
 OUTPUT_PATH = os.path.join(DATA_DIR, "data_clean.csv")
 
@@ -37,9 +37,9 @@ dataset_names = [
 
 MAX_PER_CATEGORY = 60000
 
-# ---------------------------------------------------------------------
+
 # Cleaning functions
-# ---------------------------------------------------------------------
+
 REMOVALS = [
     '"Batteries Included?": "No"', '"Batteries Included?": "Yes"',
     '"Batteries Required?": "No"', '"Batteries Required?": "Yes"',
@@ -80,9 +80,9 @@ def safe_float(x):
     except:
         return np.nan
 
-# ---------------------------------------------------------------------
+
 # Select files
-# ---------------------------------------------------------------------
+
 files_to_process = []
 
 for name in dataset_names:
@@ -94,24 +94,24 @@ for name in dataset_names:
     elif os.path.exists(csv_path):
         files_to_process.append(csv_path)
 
-# ---------------------------------------------------------------------
+
 # Process datasets
-# ---------------------------------------------------------------------
+
 final_rows = []
 
 for path in tqdm(files_to_process, desc="Processing categories"):
     filename = os.path.basename(path)
-    print(f"\n📄 Processing {filename}")
+    print(f"\nProcessing {filename}")
 
     try:
         df = pd.read_csv(path, low_memory=False) if path.endswith(".csv") else pd.read_parquet(path)
     except Exception:
-        print(f"❌ Failed to load {filename}")
+        print(f"Failed to load {filename}")
         continue
 
     # Required fields
     if not all(x in df.columns for x in ["title", "price_num", "store"]):
-        print(f"⚠ Skipping {filename} — missing required columns")
+        print(f"Skipping {filename} — missing required columns")
         continue
 
     df["price_num"] = df["price_num"].apply(safe_float)
@@ -157,15 +157,14 @@ for path in tqdm(files_to_process, desc="Processing categories"):
     print(f"✔ Final rows from {filename}: {len(out):,}")
     final_rows.append(out)
 
-# ---------------------------------------------------------------------
 # Merge & Save
-# ----------------------------------------------------------------=====
+
 if not final_rows:
     raise RuntimeError("❌ No valid data found!")
 
 final_df = pd.concat(final_rows).drop_duplicates(subset=["title"]).reset_index(drop=True)
 final_df.to_csv(OUTPUT_PATH, index=False)
 
-print("\n🎉 DONE!")
-print(f"📦 Saved → {OUTPUT_PATH}")
-print(f"📊 Final shape: {final_df.shape}")
+print("\nDONE!")
+print(f"Saved → {OUTPUT_PATH}")
+print(f"Final shape: {final_df.shape}")
