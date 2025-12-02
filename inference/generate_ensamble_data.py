@@ -35,7 +35,7 @@ VLLM_URL = "http://localhost:8000/v1/completions"
 RAG_DIR = os.path.join(project_root, "rag")
 
 # 3. GLOBAL MODEL LOADING 
-print("🚀 Starting Global Pre-load...")
+print("Starting Global Pre-load...")
 
 # A. Load SHARED Encoder (intfloat/e5-large)
 print("[1/5] Loading Shared Encoder (intfloat/e5-large)...")
