@@ -126,7 +126,7 @@ rf = RandomForestRegressor(
 )
 
 # Initialize internal attributes
-print("🔧 Finalizing model structure...")
+print("Finalizing model structure...")
 rf.fit(X_train[:2], y_train_log[:2])
 
 # Overwrite with actual trained trees
