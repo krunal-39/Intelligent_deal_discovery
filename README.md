@@ -10,7 +10,7 @@ A sophisticated **Price Intelligence System** that autonomously discovers except
 ## 🎯 Key Features
 
 - **Multi-Agent Architecture**: Specialized AI agents work collaboratively for accurate price predictions
-- **Hybrid Intelligence**: Combines LLMs (Llama 3.1, Gemini) with ML models (LightGBM, Random Forest)
+- **Hybrid Intelligence**: Combines LLMs (Llama 3.1, Gemini) with ML models (LightGBM)
 - **RAG-Enhanced**: Uses Retrieval-Augmented Generation with FAISS for historical price grounding
 - **Autonomous Discovery**: Continuously monitors RSS feeds for new deals
 - **Real-time Alerts**: Instant notifications via Telegram when great deals are found
@@ -47,7 +47,6 @@ A sophisticated **Price Intelligence System** that autonomously discovers except
 | **Specialist Agent** | Fine-tuned Llama 3.1 8B | Analyzes complex product specifications |
 | **Frontier Agent** | Google Gemini 2.5 | Provides second opinion and logic checks |
 | **LightGBM Agent** | LightGBM + TF-IDF | Fast keyword-based price estimates |
-| **Random Forest Agent** | Random Forest + E5 Embeddings | Semantic similarity-based predictions |
 | **Ensemble Agent** | XGBoost Meta-Learner | Aggregates all predictions into final price |
 
 ## 📁 Project Structure
@@ -59,32 +58,30 @@ A sophisticated **Price Intelligence System** that autonomously discovers except
 │   ├── agents/
 │   │   ├── base_agent.py          # Base class for all agents
 │   │   ├── planning_agent.py      # Central orchestrator
-│   │   ├── scanner_agent.py       # RSS feed monitor
+│   │   ├── scanner_agent.py       # RSS feed monitor 
 │   │   ├── specialist_agent.py    # Llama 3.1 wrapper
 │   │   ├── frontier_agent.py      # Gemini 2.5 wrapper
 │   │   ├── lightgbm_agent.py      # LightGBM wrapper
-│   │   ├── rf_agent.py            # Random Forest wrapper
 │   │   ├── ensemble_agent.py      # XGBoost ensemble wrapper
-│   |   |── deals.py               # Data structures
+│   |   |── deals.py               # rss feed parser
 │   │   ├── evaluator_agent.py     # Quality assurance
 │   │   ├── messaging_agent.py     # Communication handler
-│   │   └── rag_utility.py         # Vector search utility
+│   │   └── rag_utility.py         # unified prompt generation
 │   ├── prompts.py                 # Centralized prompts
-│   ├── dataset_setup.ipynb        # EDA and visualization
-│   ├── finetune_dataset.py        # Data cleaning
+│   ├── dataset_setup.ipynb        # EDA and visualization + Dataset Download
+│   ├── dataset_clean.py           # Data cleaning
 │   ├── create_jsonl.py            # JSONL formatting
 │   ├── collator.py                # Custom tokenization
-│   └── merge_llama_qlora.py       # LoRA merging utility
 ├── rag/
-│   ├── install.sh                 # Dependency setup
+│   ├── install.sh                 # RAG dependency setup
 │   └── build_faiss_index.py       # FAISS index builder
 ├── notebooks/
 │   ├── train_qlora.py             # Llama fine-tuning
 │   ├── train_lgbm.py              # LightGBM training
 │   ├── train_rf.py                # Random Forest training
-│   └── train_ensamble.py          # XGBoost training
+│   └── train_ensemble.py          # XGBoost training
 └── inference/
-    ├── generate_ensamble_data.py  # Meta-learner dataset
+    ├── generate_ensemble_data.py  # Meta-learner dataset
     ├── llama_infer_merged.py      # Llama testing
     └── query_with_gemini.py       # RAG testing
 ```
@@ -194,18 +191,16 @@ Uses 4-bit quantization for efficient training on consumer GPUs.
 # LightGBM with TF-IDF features
 python notebooks/train_lgbm.py
 
-# Random Forest with E5 embeddings
-python notebooks/train_rf.py
 ```
 
 ### Train Meta-Learner
 
 ```bash
 # Generate ensemble training data
-python inference/generate_ensamble_data.py
+python inference/generate_ensemble_data.py
 
 # Train XGBoost judge
-python notebooks/train_ensamble.py
+python notebooks/train_ensemble.py
 ```
 
 ### Merge LoRA Adapters
@@ -263,7 +258,7 @@ The ensemble approach provides:
 - **Adaptability**: Easy to add/remove agents without system redesign
 
 
-## 🙏 Acknowledgments
+## 👉 Acknowledgments
 
 - **Llama 3.1** by Meta AI
 - **Google Gemini** for frontier model capabilities
