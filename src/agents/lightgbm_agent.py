@@ -11,7 +11,7 @@ class LightGBMAgent(Agent):
         super().__init__(self.name, self.color)
         
         # Paths based on your screenshot structure
-        base_path = "src/models/lightgbm_price_model_full"
+        base_path = "src/models/lightgbm_svd_3000"
         model_path = f"{base_path}/lightgbm_model.pkl"
         vec_path = f"{base_path}/tfidf_vectorizer.pkl"
 
