@@ -7,14 +7,14 @@ set -e
 
 echo "Installing Python packages..."
 
-# Core (CPU) packages
+# Core packages
 pip install -U pip
 pip install -U sentence-transformers transformers tqdm numpy pandas joblib
 
 # Light on installs for torch: user already has torch in env; otherwise uncomment:
 # pip install torch --extra-index-url https://download.pytorch.org/whl/cu121
 
-# Try faiss-gpu first (may fail depending on CUDA / wheel availability)
+# Try faiss-gpu first
 python - <<'PY'
 import subprocess, sys
 try:
