@@ -10,7 +10,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from prompts import row_to_example
 
-# ---------------------------------------------------------------------
+
 # Paths
 DATA_DIR = "/data/home/anjeshnarwal/LLM_price_predictor/data/cleaned"
 OUTPUT_DIR = "/data/home/anjeshnarwal/LLM_price_predictor/data/finetune"
@@ -21,13 +21,11 @@ VAL_JSONL = os.path.join(OUTPUT_DIR, "val.jsonl")
 
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-# ---------------------------------------------------------------------
 # Load dataset
-print(f"📂 Reading dataset from: {CSV_PATH}")
+print(f"Reading dataset from: {CSV_PATH}")
 df = pd.read_csv(CSV_PATH)
-print(f"✅ Loaded {len(df):,} rows and columns: {list(df.columns)}")
+print(f"Loaded {len(df):,} rows and columns: {list(df.columns)}")
 
-# ---------------------------------------------------------------------
 # Split into train and validation
 RANDOM_SEED = 42
 TEST_SIZE = 0.1
@@ -39,9 +37,8 @@ train_df, val_df = train_test_split(
     shuffle=True
 )
 
-print(f"✅ Split completed → Train: {len(train_df):,} | Validation: {len(val_df):,}")
+print(f"Split completed → Train: {len(train_df):,} | Validation: {len(val_df):,}")
 
-# ---------------------------------------------------------------------
 # Writer helper
 def write_jsonl(df_in, path, mode="train"):
     """Writes DataFrame to JSONL file using row_to_example() from prompts.py"""
@@ -52,13 +49,13 @@ def write_jsonl(df_in, path, mode="train"):
             if ex:
                 f.write(json.dumps(ex, ensure_ascii=False) + "\n")
                 n += 1
-    print(f"💾 Wrote {n:,} examples → {path}")
+    print(f"Wrote {n:,} examples → {path}")
 
-# ---------------------------------------------------------------------
+
 # Write the JSONL files
 write_jsonl(train_df, TRAIN_JSONL, mode="train")
 write_jsonl(val_df, VAL_JSONL, mode="test")
 
-print("\n✅ JSONL generation complete!")
-print(f"📦 Train file: {TRAIN_JSONL}")
-print(f"📦 Validation file: {VAL_JSONL}")
+print("\nJSONL generation complete!")
+print(f"Train file: {TRAIN_JSONL}")
+print(f"Validation file: {VAL_JSONL}")
