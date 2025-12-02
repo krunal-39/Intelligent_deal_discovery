@@ -14,13 +14,13 @@ class DataCollatorForPricePrediction:
         pretokenized = "input_ids" in batch[0]
 
         if pretokenized:
-            # ✅ Already tokenized dataset (input_ids, labels, etc.)
+            # Already tokenized dataset (input_ids, labels, etc.)
             input_ids_list = [torch.tensor(ex["input_ids"], dtype=torch.long) for ex in batch]
             labels_list = []
             for ids in input_ids_list:
                 # create dummy labels same as input (for LM)
                 lbl = ids.clone()
-                lbl[: -1] = -100  # mask all but last token (simple default)
+                lbl[: -1] = -100  # mask all but last token 
                 labels_list.append(lbl)
 
             pad_id = self.tokenizer.pad_token_id or 0
@@ -29,7 +29,7 @@ class DataCollatorForPricePrediction:
             attention_mask = (input_ids != pad_id).long()
             return {"input_ids": input_ids, "attention_mask": attention_mask, "labels": labels}
 
-        # 🔽 Otherwise, fall back to prompt/response processing
+        # Otherwise, fall back to prompt/response processing
         prompts = [ex["prompt"] for ex in batch]
         responses = [str(ex["response"]) for ex in batch]
 
