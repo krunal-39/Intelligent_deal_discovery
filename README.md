@@ -44,9 +44,9 @@ A sophisticated **Price Intelligence System** that autonomously discovers except
 
 | Expert | Technology | Role |
 |--------|-----------|------|
-| **Specialist Agent** | Fine-tuned Llama 3.1 8B | Analyzes complex product specifications |
-| **Frontier Agent** | Google Gemini 2.5 | Provides second opinion and logic checks |
-| **LightGBM Agent** | LightGBM + TF-IDF | Fast keyword-based price estimates |
+| **Specialist Agent** | Fine-tuned Llama 3.1 8B | Analyzes complex product specifications and price estimates |
+| **Frontier Agent** | Google Gemini 2.5 | Analyzes complex product specifications and price estimates |
+| **LightGBM Agent** | LightGBM + TF-IDF | TF-IDF keyword-based price estimates |
 | **Ensemble Agent** | XGBoost Meta-Learner | Aggregates all predictions into final price |
 
 ## 📁 Project Structure
@@ -168,8 +168,8 @@ graph LR
 1. **Planning Agent** initiates the workflow and coordinates all agents
 2. **Scanner Agent** monitors RSS feeds and filters relevant products using Gemini Flash
 3. **Ensemble Agent** orchestrates the Council of Experts:
-   - **Specialist Agent** (Llama 3.1) analyzes product specifications
-   - **Frontier Agent** (Gemini 2.5) provides validation and second opinion
+   - **Specialist Agent** (Llama 3.1) analyzes product specifications and price estimation
+   - **Frontier Agent** (Gemini 2.5) provides validation and second opinion for price estimation
    - **LightGBM Agent** generates keyword-based price estimate
    - **XGBoost** aggregates all predictions into final consensus price
 4. **Evaluator Agent** compares predicted price vs. actual price
@@ -203,13 +203,6 @@ python inference/generate_ensemble_data.py
 python notebooks/train_ensemble.py
 ```
 
-### Merge LoRA Adapters
-
-```bash
-python src/merge_llama_qlora.py
-```
-
-Combines trained LoRA adapters with base Llama model for production deployment.
 
 ## 🧩 Data Processing
 
@@ -221,6 +214,11 @@ python src/finetune_dataset.py
 
 # Convert to JSONL format
 python src/create_jsonl.py
+```
+
+### example of json prompt
+```
+{"prompt": "You are a helpful assistant that estimates the price of a product based on its title, category, store, features, description, and details. Return only the numeric price in USD, formatted with two decimals (e.g., 19.99).\n\nProduct Title: LEZYNE Power Drive 1100i Loaded Headlight Kit Silver, One Size\nProduct Category: Sports & Outdoors\nStore / Brand: LEZYNE\nProduct Features: Lezyne Power Drive 1100i Loaded Headlight Polish\nProduct Description: Lezyne Power Drive 1100i Loaded Headlight: Polish\nAdditional Details: Color Silver , Brand LEZYNE , Weight 0.3 Kilograms , Mounting Type Handlebar Mount , Dimensions LxWxH 6 x 5.25 x 3 inches , Auto Part Position Front , International Protection Rating IPX7 , Dimensions L x W x H 9.09 x 6.46 x 3.15 inches , Weight 0.58 Kilograms , Brand Name LEZYNE , s 1 , Manufacturer Lezyne , Part 1-LED-5A-V606_Polish/Hi Gloss , Model Year 2017 , Rank Sports & Outdoors 1667415, Bike Headlights 1296 , Available May 31, 2017\n\nPredict the price in USD (two decimals).", "response": "99.92"}
 ```
 
 ### Exploratory Analysis
