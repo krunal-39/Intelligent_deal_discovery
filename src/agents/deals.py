@@ -1,60 +1,3 @@
-# from pydantic import BaseModel
-# from typing import List, Optional
-# from bs4 import BeautifulSoup
-# import re
-# import feedparser
-# import time
-
-# RSS_FEEDS = [
-#     "https://www.dealnews.com/c142/Electronics/?rss=1",
-#     "https://www.dealnews.com/c39/Computers/?rss=1",
-#     "https://www.dealnews.com/f1912/Smart-Home/?rss=1",
-# ]
-
-# def clean_html(html_snippet: str) -> str:
-#     if not html_snippet: return ""
-#     soup = BeautifulSoup(html_snippet, 'html.parser')
-#     return soup.get_text(separator=' ', strip=True)
-
-# class Deal(BaseModel):
-#     """
-#     Updated Deal object to match Training Data structure.
-#     """
-#     title: str
-#     price: float
-#     url: str
-#     # The fields below match your Training Data keys
-#     category: str = "General"
-#     features: str = ""
-#     description: str
-#     details: str = "N/A"
-
-# class ScrapedDeal:
-#     def __init__(self, entry):
-#         self.title = entry.get('title', 'Unknown Deal')
-#         self.url = entry.get('link', '')
-#         raw_summary = entry.get('description', '') or entry.get('summary', '')
-#         self.description = clean_html(raw_summary)
-#         self.price = self._extract_price(self.title + " " + self.description)
-
-#     def _extract_price(self, text):
-#         match = re.search(r'\$(\d{1,3}(?:,\d{3})*(?:\.\d{2})?)', text)
-#         if match:
-#             return float(match.group(1).replace(',', ''))
-#         return 0.0
-
-#     @classmethod
-#     def fetch_deals(cls) -> List['ScrapedDeal']:
-#         found_deals = []
-#         for url in RSS_FEEDS:
-#             try:
-#                 feed = feedparser.parse(url)
-#                 for entry in feed.entries[:5]: 
-#                     found_deals.append(cls(entry))
-#                 time.sleep(0.5) 
-#             except Exception as e:
-#                 print(f"⚠️ RSS Error ({url}): {e}")
-#         return found_deals
 
 from pydantic import BaseModel
 from typing import List, Optional
@@ -181,6 +124,6 @@ class ScrapedDeal:
                         
                 time.sleep(0.5) 
             except Exception as e:
-                print(f"⚠️ RSS Error ({url}): {e}")
+                print(f" RSS Error ({url}): {e}")
         return found_deals
     
