@@ -12,10 +12,10 @@ class ScannerAgent(Agent):
     def __init__(self):
         super().__init__(name="Scanner Agent", color=self.CYAN)
         
-        # Use Gemini Key 4 (Flash-Lite is perfect for this)
+        # Use Gemini Key 4 
         api_key = os.getenv("GEMINI_API_KEY_4")
         if not api_key:
-            self.log("⚠️ Warning: GEMINI_API_KEY_4 not found.")
+            self.log("Warning: GEMINI_API_KEY_4 not found.")
         else:
             genai.configure(api_key=api_key)
             self.model = genai.GenerativeModel("models/gemini-2.5-flash")
@@ -30,14 +30,14 @@ class ScannerAgent(Agent):
             return []
 
         # Pass FULL description so Gemini can see specs
-        # We also pass the Price and Retailer so Gemini can use them for filtering
+        
         deal_text = "\n\n".join([
             f"ID: {i}\nTitle: {d.title}\nPrice: ${d.price}\nStore: {d.retailer}\nDesc: {d.description}"
             for i, d in enumerate(scraped_deals)
             if d.price > 0 
         ])
 
-        # --- DYNAMIC PROMPT INJECTED HERE ---
+        #  DYNAMIC PROMPT INJECTED HERE
         prompt = f"""
         You are a Deal Hunter. 
         I am looking for deals matching this specific request: "{query}"
@@ -89,7 +89,7 @@ class ScannerAgent(Agent):
             try:
                 structured_data = json.loads(text)
             except json.JSONDecodeError:
-                self.log("⚠️ JSON Decode Error from Gemini. Skipping this batch.")
+                self.log("JSON Decode Error from Gemini. Skipping this batch.")
                 return []
             
             final_deals = []
