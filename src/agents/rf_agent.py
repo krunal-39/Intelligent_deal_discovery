@@ -22,9 +22,9 @@ class RandomForestAgent(Agent):
             self.log(f"Loading RF from {base_path}...")
             self.model = joblib.load(model_path)
             self.vec = joblib.load(vec_path)
-            self.log("✅ RF Model Loaded.")
+            self.log("RF Model Loaded.")
         except Exception as e:
-            self.log(f"❌ Failed to load RF: {e}")
+            self.log(f"Failed to load RF: {e}")
 
     def _construct_training_prompt(self, data: dict) -> str:
         """
@@ -38,7 +38,6 @@ class RandomForestAgent(Agent):
         )
 
         # 2. Fill in the fields
-        # Note: We default to empty strings or 'N/A' to match likely training behavior
         user_text = (
             f"\n\nProduct Title: {data.get('title', '')}\n"
             f"Product Category: {data.get('category', 'General')}\n"
@@ -56,12 +55,11 @@ class RandomForestAgent(Agent):
         Changed input from 'title: str' to 'deal_data: dict'
         """
         if not self.model or not self.vec:
-            self.log("⚠️ RF Model not loaded, returning 0.0")
+            self.log(" RF Model not loaded, returning 0.0")
             return 0.0
 
         try:
             # 1. Reconstruct the Prompt String
-            # (The TF-IDF vectorizer needs the whole blob of text)
             full_text_input = self._construct_training_prompt(deal_data)
             
             # 2. Vectorize the Full Text
@@ -71,12 +69,10 @@ class RandomForestAgent(Agent):
             log_pred = self.model.predict(vector)[0]
             
             # 4. Reverse Log Transformation (Exp(x) - 1)
-            # Only keep this if your training target was np.log1p(price)
             price = np.expm1(log_pred)
             
             # 5. Round & Return
             final_price = round(float(price), 2)
-            # self.log(f"Prediction: ${final_price}")
             return final_price
 
         except Exception as e:
