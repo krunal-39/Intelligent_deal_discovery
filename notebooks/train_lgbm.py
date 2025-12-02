@@ -104,7 +104,7 @@ def main():
     mse  = mean_squared_error(val_labels, preds)
     rmse = np.sqrt(mse)
 
-    print("\n📊 Validation Metrics")
+    print("\nValidation Metrics")
     print(f"MAE : {mae:.4f}")
     print(f"MSE : {mse:.4f}")
     print(f"RMSE: {rmse:.4f}")
