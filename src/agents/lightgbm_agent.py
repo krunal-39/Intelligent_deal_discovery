@@ -23,9 +23,9 @@ class LightGBMAgent(Agent):
             # Load model and vectorizer
             self.model = joblib.load(model_path)
             self.vec = joblib.load(vec_path)
-            self.log("✅ LightGBM Model Loaded.")
+            self.log("LightGBM Model Loaded.")
         except Exception as e:
-            self.log(f"❌ Failed to load LightGBM: {e}")
+            self.log(f"Failed to load LightGBM: {e}")
 
     def _construct_training_prompt(self, data: dict) -> str:
         """
@@ -55,7 +55,7 @@ class LightGBMAgent(Agent):
         Predicts price based on the FULL structured prompt.
         """
         if not self.model or not self.vec:
-            self.log("⚠️ LightGBM Model not loaded, returning 0.0")
+            self.log("LightGBM Model not loaded, returning 0.0")
             return 0.0
 
         try:
@@ -66,10 +66,8 @@ class LightGBMAgent(Agent):
             vector = self.vec.transform([full_text_input])
             
             # 3. Predict 
-            # REMOVED: np.expm1() because the model was trained on raw prices
             price = self.model.predict(vector)[0]
             
-            # Sanity check: Ensure price isn't negative (sometimes regression can do that)
             price = max(0.0, float(price))
             
             # 4. Round & Return
