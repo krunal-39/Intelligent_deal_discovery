@@ -8,9 +8,7 @@ Upgrades: BF16 Precision + Target All Linear Layers (Better Quality).
 import os
 import sys
 
-# -------------------------------------------------------------
-# CRITICAL: Set GPU 1 (Idle) as the only visible device
-# -------------------------------------------------------------
+# Set GPU 1 as the only visible device
 os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
 
@@ -32,9 +30,8 @@ from peft import (
     AutoPeftModelForCausalLM
 )
 
-# -------------------------------------------------------------
 # 1. Configuration
-# -------------------------------------------------------------
+
 load_dotenv()
 HF_TOKEN = os.getenv("HUGGINGFACE_HUB_TOKEN")
 assert HF_TOKEN, "HUGGINGFACE_HUB_TOKEN missing!"
@@ -51,9 +48,7 @@ SPECIALIST_DIR.mkdir(parents=True, exist_ok=True)
 
 torch.manual_seed(42)
 
-# -------------------------------------------------------------
 # 2. Load Datasets
-# -------------------------------------------------------------
 print(f"Loading datasets...")
 
 raw_datasets = load_dataset(
@@ -71,9 +66,9 @@ raw_datasets["train"] = raw_datasets["train"].shuffle(seed=42).select(range(TARG
 print(f"Train size: {len(raw_datasets['train'])}")
 print(f"Validation size: {len(raw_datasets['validation'])}")
 
-# -------------------------------------------------------------
+
 # 3. Tokenizer
-# -------------------------------------------------------------
+
 MODEL_ID = "meta-llama/Meta-Llama-3.1-8B"
 tokenizer = AutoTokenizer.from_pretrained(MODEL_ID, use_fast=False, token=HF_TOKEN)
 tokenizer.pad_token = tokenizer.eos_token
@@ -87,21 +82,21 @@ print("Pretokenizing...")
 raw_datasets["train"] = raw_datasets["train"].map(tokenize_batch, batched=True, batch_size=2048, num_proc=16)
 raw_datasets["validation"] = raw_datasets["validation"].map(tokenize_batch, batched=True, batch_size=2048, num_proc=8)
 
-# -------------------------------------------------------------
+
 # 4. Collator
-# -------------------------------------------------------------
+
 project_root = BASE_DIR
 if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
 from src.collator import DataCollatorForPricePrediction
 collator = DataCollatorForPricePrediction(tokenizer=tokenizer, max_length=512)
 
-# -------------------------------------------------------------
+
 # 5. Model (BF16 Upgrade)
-# -------------------------------------------------------------
+
 bnb_cfg = BitsAndBytesConfig(
     load_in_4bit=True,
-    bnb_4bit_compute_dtype=torch.bfloat16, # UPGRADE: Use BF16 instead of FP16
+    bnb_4bit_compute_dtype=torch.bfloat16, 
     bnb_4bit_use_double_quant=True,
     bnb_4bit_quant_type="nf4"
 )
@@ -117,7 +112,7 @@ model = AutoModelForCausalLM.from_pretrained(
 
 model = prepare_model_for_kbit_training(model, use_gradient_checkpointing=True)
 
-# UPGRADE: Target ALL Linear Layers (Makes model smarter)
+# Target ALL Linear Layers 
 target_modules = [
     "q_proj", "k_proj", "v_proj", "o_proj", 
     "gate_proj", "up_proj", "down_proj"
@@ -135,9 +130,8 @@ model = get_peft_model(model, lora_cfg)
 model.config.use_cache = False
 model.print_trainable_parameters()
 
-# -------------------------------------------------------------
-# 6. Trainer (Optimized)
-# -------------------------------------------------------------
+# 6. Trainer 
+
 train_args = TrainingArguments(
     output_dir=str(OUTPUT_DIR),
     num_train_epochs=1,
@@ -150,12 +144,11 @@ train_args = TrainingArguments(
     learning_rate=2e-4,
     warmup_ratio=0.03,
     
-    # UPGRADE: BF16 is more stable on A6000
     fp16=False,
     bf16=True, 
     
     optim="adamw_bnb_8bit",
-    lr_scheduler_type="cosine", # UPGRADE: Better convergence
+    lr_scheduler_type="cosine",
     
     logging_steps=50,
     eval_strategy="steps",
@@ -178,9 +171,9 @@ trainer = Trainer(
 print("Starting training...")
 trainer.train()
 
-# -------------------------------------------------------------
+
 # 7. Merge & Save
-# -------------------------------------------------------------
+
 trainer.save_model(str(OUTPUT_DIR))
 tokenizer.save_pretrained(OUTPUT_DIR)
 del model, trainer
