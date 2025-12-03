@@ -78,9 +78,9 @@ def tokenize_batch(examples):
     out = tokenizer(texts, truncation=True, padding=False, max_length=512, add_special_tokens=False)
     return {"input_ids": out["input_ids"]}
 
-# print("Pretokenizing...")
-# raw_datasets["train"] = raw_datasets["train"].map(tokenize_batch, batched=True, batch_size=2048, num_proc=16)
-# raw_datasets["validation"] = raw_datasets["validation"].map(tokenize_batch, batched=True, batch_size=2048, num_proc=8)
+print("Pretokenizing...")
+raw_datasets["train"] = raw_datasets["train"].map(tokenize_batch, batched=True, batch_size=2048, num_proc=16)
+raw_datasets["validation"] = raw_datasets["validation"].map(tokenize_batch, batched=True, batch_size=2048, num_proc=8)
 
 
 # 4. Collator
